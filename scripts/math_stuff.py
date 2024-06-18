@@ -19,8 +19,8 @@ def onOffToOn(channel, sampleIndex, val, prev):
 	for row in range(8):
 		if cal[row+1, 6] == 1:
 	
-			array = np.array([float(cal[row+1,3]), float(cal[row+1,4]), float(cal[row+1,5])])
-			vectors.append(array)
+			vec = np.array([float(cal[row+1,3]), float(cal[row+1,4]), float(cal[row+1,5])])
+			vectors.append(normalize(vec))
 			vector_point.append(np.array([float(cal[row+1, 0]), float(cal[row+1, 1]), float(cal[row+1, 2])]))
 	
 	#Pick the first 3 vectors and calculate normal vectors between all of them
@@ -51,6 +51,13 @@ def onOffToOn(channel, sampleIndex, val, prev):
 	op('true_position').par.value2 = interesction[2]
 
 	op('calibrating').par.value0 = 0
+
+	out('u_vector', u)
+	out('v_vector', v)
+	out('w_vector', w)
+	out('uv_norm', norm1)
+	out('vw_norm', norm2)
+	out('wu_norm', norm3)
 	return
 
 def whileOn(channel, sampleIndex, val, prev):
@@ -64,4 +71,15 @@ def whileOff(channel, sampleIndex, val, prev):
 
 def onValueChange(channel, sampleIndex, val, prev):
 	return
-	
+
+def out(target, val):
+	opt = op(target)
+	opt.par.value0 = val[0]
+	opt.par.value1 = val[1]
+	opt.par.value2 = val[2]
+
+def normalize(v):
+	norm = np.linalg.norm(v)
+	if norm == 0: 
+		return v
+	return v / norm
