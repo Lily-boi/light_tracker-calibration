@@ -15,13 +15,16 @@ def onOffToOn(channel, sampleIndex, val, prev):
 	vector_point = []
 
 	#Looks for marked rows in the data sheet which signifies they contain a vector to be used
-
-	for row in range(8):
+	print('---------------------------------------------------------')
+	for row in range(4):
 		if cal[row+1, 6] == 1:
 	
 			vec = np.array([float(cal[row+1,3]), float(cal[row+1,4]), float(cal[row+1,5])])
+			point = np.array([float(cal[row+1, 0]), float(cal[row+1, 1]), float(cal[row+1, 2])])
 			vectors.append(normalize(vec))
-			vector_point.append(np.array([float(cal[row+1, 0]), float(cal[row+1, 1]), float(cal[row+1, 2])]))
+			vector_point.append(point)
+
+			print(f'{normalize(vec)}, {point}')
 	
 	#Pick the first 3 vectors and calculate normal vectors between all of them
 	u, v, w = vectors[0:3]
@@ -33,11 +36,12 @@ def onOffToOn(channel, sampleIndex, val, prev):
 	#vector_point contains the corrosponding points that are on each plane
 
 	A = np.vstack(norms)
-	print(A.shape)
+	print(A)
 	if np.linalg.det(A) == 0:
 		print('Pick some better points, stupid')
 		return
 	b = np.array([vec.dot(point) for vec, point in zip(norms, vector_point)])
+	print(b)
 	
 	try:
 		interesction = np.linalg.solve(A, b)
@@ -49,8 +53,6 @@ def onOffToOn(channel, sampleIndex, val, prev):
 	op('true_position').par.value0 = interesction[0]
 	op('true_position').par.value1 = interesction[1]
 	op('true_position').par.value2 = interesction[2]
-
-	op('calibrating').par.value0 = 0
 
 	out('u_vector', u)
 	out('v_vector', v)

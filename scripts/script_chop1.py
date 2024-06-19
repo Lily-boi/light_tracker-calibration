@@ -62,7 +62,7 @@ def magical_function(scriptOp):
     #Do the cross products to get direction
     cross_floor = forward.cross(floor_proj)
     left = forward.cross(up)
-    
+
     #Find yaw through dot product cos(@)|A||B| = A . B --> acos(A.B/|A||B|) = @
     yaw = (math.acos(forward.dot(floor_proj))) #IMPORTANT STUFF
 
@@ -82,7 +82,7 @@ def magical_function(scriptOp):
          out_yaw += 360
 
     out_yaw *= 255/540
-    out_pitch *= 117/104.4
+    out_pitch *= 117/90
 
     bad_yaw = math.floor(out_yaw)
     bad_pitch = math.floor(out_pitch)
