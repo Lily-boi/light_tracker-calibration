@@ -3,9 +3,6 @@
 import numpy as np
 # press 'Setup Parameters' in the OP to call this function to re-create the parameters.
 def onSetupParameters(scriptOp):
-    page = scriptOp.appendCustomPage('Custom')
-    p = page.appendFloat('Valuea', label='Value A')
-    p = page.appendFloat('Valueb', label='Value B')
     angle(scriptOp)
     return
 

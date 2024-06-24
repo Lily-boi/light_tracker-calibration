@@ -21,26 +21,26 @@ def onOffToOn(channel, sampleIndex, val, prev):
 	
 			vec = np.array([float(cal[row+1,3]), float(cal[row+1,4]), float(cal[row+1,5])])
 			point = np.array([float(cal[row+1, 0]), float(cal[row+1, 1]), float(cal[row+1, 2])])
-			vectors.append(normalize(vec))
+			vectors.append(vec)
 			vector_point.append(point)
 
-			print(f'{normalize(vec)}, {point}')
-	
+			print(f'{vec}, {point}')
+
 	#Pick the first 3 vectors and calculate normal vectors between all of them
 	u, v, w = vectors[0:3]
 	norm1 = np.cross(u, v)
 	norm2 = np.cross(v, w)
-	norm3 = np.cross(w, u)
+	norm3 = np.cross(w, u) 	
 	norms = [norm1, norm2, norm3]
 	#U, V, W are normal's
 	#vector_point contains the corrosponding points that are on each plane
 
-	A = np.vstack(norms)
+	A = np.array(norms).T
 	print(A)
 	if np.linalg.det(A) == 0:
 		print('Pick some better points, stupid')
 		return
-	b = np.array([vec.dot(point) for vec, point in zip(norms, vector_point)])
+	b = np.array([norm1.dot(vector_point[0]), norm2.dot(vector_point[1]), norm3.dot(vector_point[2])])
 	print(b)
 	
 	try:

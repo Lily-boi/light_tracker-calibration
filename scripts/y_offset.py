@@ -13,7 +13,7 @@ def onOffToOn(channel, sampleIndex, val, prev):
 	return
 
 def whileOn(channel, sampleIndex, val, prev):
-	cal[int(out[0]), 4] = round(cal[int(out[0]), 4] + val - .2, 2)
+	cal[int(out[0]), 4] = round(cal[int(out[0]), 4] + (val - .2)*2, 2)
 	return
 
 def onOnToOff(channel, sampleIndex, val, prev):

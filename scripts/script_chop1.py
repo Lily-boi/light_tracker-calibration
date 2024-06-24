@@ -11,10 +11,6 @@ def onSetupParameters(scriptOp):
 
 # called whenever custom pulse parameter is pushed
 def onPulse(par):
-    if par.name == 'Vector':
-        parent(1).par.Restingx = parent(1).par.Followposx - parent(1).par.Posx
-        parent(1).par.Restingy = parent(1).par.Followposy - parent(1).par.Posy
-        parent(1).par.Restingz = parent(1).par.Followposz - parent(1).par.Posz
     return
 
 
@@ -77,27 +73,12 @@ def magical_function(scriptOp):
     #Send out the yaw and pitch in terms of degrees
     out_yaw = np.rad2deg(yaw)
     out_pitch = np.rad2deg(pitch)
-
-    if out_yaw < 180:
-         out_yaw += 360
-
-    out_yaw *= 255/540
-    out_pitch *= 117/90
-
-    bad_yaw = math.floor(out_yaw)
-    bad_pitch = math.floor(out_pitch)
-
-    fine_yaw = (out_yaw-bad_yaw) * 255
-    fine_pitch = (out_pitch-bad_pitch) * 255
-
-    op('final_rotation').par.value0 = bad_yaw
-    op('final_rotation').par.value1 = fine_yaw
-    op('final_rotation').par.value2 = bad_pitch
-    op('final_rotation').par.value3 = fine_pitch
-
+    
+    op('angle_output').par.value0 = out_yaw
+    op('angle_output').par.value1 = out_pitch
 
     '''
-    THIS IS FOR RENDERING ONLY (YOU CAN GET RID OF THIS TO IMPROVE PERFORMANCE SINCE IT USES LOTS OF MATH)
+    THIS IS FOR RENDERING ONLY (YOU CAN GET RID OF THIS TO IMPROVE PERFORMANCE SINCE IT USES SOME OF MATH)
     '''
     yaw *= -1
     #Rodrigues' rotation formula to rotate the down vector into all the other stuff
