@@ -65,7 +65,6 @@ def magical_function(scriptOp):
     if cross_floor.dot(up) < 0: #This is here to invert stuff since acos(180+x) = acos(x) so we have to mirror it
         yaw = math.pi*2-yaw                                              
 
-
     pitch = (math.acos(down.dot(target))) #IMPORTANT STUFF PART 2 (YOU THOUGHT WE WERE DONE SIKE) (its just the same as last time)
     #                                            But we dont need to do the inversion stuff cause the light cant bend backwards
     pitch -= math.acos(down.dot(rest))     #This is to get rid of the angle that the resting position is already turned from down

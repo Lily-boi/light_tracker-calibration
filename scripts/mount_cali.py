@@ -16,8 +16,8 @@ def onCook(scriptOp):
 
 
 def angle(scriptOp):
-    angleZ = float(scriptOp.inputs[0][1])
-    angleX = -float(scriptOp.inputs[0][0])
+    angleZ = float(scriptOp.inputs[0][1]) or 0
+    angleX = -float(scriptOp.inputs[0][0]) or 0
 
     angleX = np.deg2rad(angleX)
     angleZ = np.deg2rad(angleZ)
