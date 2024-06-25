@@ -1,11 +1,11 @@
-# me - this DAT
-# scriptOp - the OP which is cooking
+'''
+INPUT - Pan and Tilt (2 angles in deg)
+OUTPUT - unit vector that has been rotated by the corrosponding pan and tilt
+'''
+
 import math
 # press 'Setup Parameters' in the OP to call this function to re-create the parameters.
 def onSetupParameters(scriptOp):
-	page = scriptOp.appendCustomPage('Custom')
-	p = page.appendFloat('Valuea', label='Value A')
-	p = page.appendFloat('Valueb', label='Value B')
 	return
 
 # called whenever custom pulse parameter is pushed
@@ -25,7 +25,7 @@ def convert(scriptOp):
     def angtovec(pan, tilt):
         ct = math.cos(rtd*tilt)
         st = math.sin(rtd*tilt)
-        cp = math.cos(rtd*-pan)
+        cp = math.cos(rtd*-pan) #Negative here because rotations are counter clockwise but clockwise for the light
         sp = math.sin(rtd*-pan)
         return [ct*cp, st, ct*sp]
 
