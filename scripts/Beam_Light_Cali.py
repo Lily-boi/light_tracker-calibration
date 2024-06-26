@@ -19,10 +19,13 @@ def convert(scriptOp):
 	x = scriptOp.inputs[0][0]
 	y = scriptOp.inputs[0][1]
 	
+ 
+	x += 180
 	x *= .4737
 	x_floor = math.floor(x)
 	x_fine = (x - x_floor) * 255	
 
+	y = 180 - y
 	y *= 1.17
 	y_floor = math.floor(y)
 	y_fine = (y - y_floor) * 255
