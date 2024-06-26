@@ -1,11 +1,15 @@
-# me - this DAT
-# 
-# channel - the Channel object which has changed
-# sampleIndex - the index of the changed sample
-# val - the numeric value of the changed sample
-# prev - the previous sample value
-# 
-# Make sure the corresponding toggle is enabled in the CHOP Execute DAT.
+'''
+Positional calibration system
+Uses the dat table to get what pan and tilt the light needs to be to hit the light and what the point coords are
+
+Lp = Light position
+Pn = Point n position
+Dn = Directional vector for point n
+Lp = Pn - Rn(Dn)
+
+Lp minimizes the difference between where it is and all the Pn-Rn(Dn) leading for a system of equations
+
+'''
 cal = op('cal')
 out = op('Outraw')
 import numpy as np
@@ -20,6 +24,8 @@ def onOffToOn(channel, sampleIndex, val, prev):
     points = []
 
     def angtovec(pan, tilt):
+        pan *= -1
+        tilt *= 1
         print(f'angles: {pan}, {tilt}')
         print(f'rad: {rtd*pan}, {rtd*tilt}')
         ct = math.cos(rtd*tilt)
@@ -67,7 +73,7 @@ def onOffToOn(channel, sampleIndex, val, prev):
 
         
     solro = np.linalg.solve(A, B)
-    solro[n+2] *= -1
+    #solro[n+2] *= -1
     print(solro[n:n+3])
     out('true_position', solro[n:n+3])
     

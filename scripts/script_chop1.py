@@ -1,5 +1,17 @@
-# me - this DAT
-# scriptOp - the OP which is cooking
+'''
+Calculates what angle the light needs to be given its mounted plane, resting position, and target
+Step 1, project the resting postion onto a plane that is perpendicular to the up vector (mounted plane)
+
+Project the target vector onto said plane
+Subtract the projection from the target, leaving the 'upwards component' of the target vector
+
+do cross product so you know if you need to rotate cloclwise or counter clockwise
+
+calculate angle between floor and resting position, calculate angle between down and target
+
+thoes are pitch and yaw/pan and tilt
+
+'''
 import numpy as np
 import math
 # press 'Setup Parameters' in the OP to call this function to re-create the parameters.

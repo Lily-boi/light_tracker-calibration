@@ -1,11 +1,6 @@
-# me - this DAT
-# 
-# channel - the Channel object which has changed
-# sampleIndex - the index of the changed sample
-# val - the numeric value of the changed sample
-# prev - the previous sample value
-# 
-# Make sure the corresponding toggle is enabled in the CHOP Execute DAT.
+'''
+Marks the row of the dat file to tell the scripts to use that point in the positional calibration system
+'''
 cal = op('cal')
 out = op('Outraw')
 

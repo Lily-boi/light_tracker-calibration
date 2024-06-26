@@ -1,4 +1,4 @@
-# me - this DAT
+'''UNECESSARY'''
 # scriptOp - the OP which is cooking
 import numpy as np
 # press 'Setup Parameters' in the OP to call this function to re-create the parameters.
