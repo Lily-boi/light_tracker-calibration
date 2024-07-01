@@ -24,7 +24,7 @@ def onOffToOn(channel, sampleIndex, val, prev):
     points = []
 
     def angtovec(pan, tilt):
-        pan *= -1
+        pan *= 1
         tilt *= 1
         print(f'angles: {pan}, {tilt}')
         print(f'rad: {rtd*pan}, {rtd*tilt}')
@@ -73,7 +73,6 @@ def onOffToOn(channel, sampleIndex, val, prev):
 
         
     solro = np.linalg.solve(A, B)
-    #solro[n+2] *= -1
     print(solro[n:n+3])
     out('true_position', solro[n:n+3])
     

@@ -25,8 +25,8 @@ def convert(scriptOp):
     def angtovec(pan, tilt):
         ct = math.cos(rtd*tilt)
         st = math.sin(rtd*tilt)
-        cp = math.cos(rtd*-pan) #Negative here because rotations are counter clockwise but clockwise for the light
-        sp = math.sin(rtd*-pan)
+        cp = math.cos(rtd*pan) #Negative here because rotations are counter clockwise but clockwise for the light
+        sp = math.sin(rtd*pan)
         return [ct*cp, st, ct*sp]
 
     target = angtovec(x, y)
