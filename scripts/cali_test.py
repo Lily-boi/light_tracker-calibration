@@ -61,7 +61,6 @@ def onPulse(par):
         print(f'Optimal p0: {p0} \nR: {r}')
         
         up = np.array([0, 1, 0])
-        print(up / 3)
         up = r @ up
         print(f'Up: {normalize(up)}')
         
