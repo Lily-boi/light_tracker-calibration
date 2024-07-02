@@ -19,16 +19,17 @@ def onOffToOn(channel, sampleIndex, val, prev):
     
     #Number of points
     n = 5
+    rtd = math.pi/180
     vector = []
     points = []
 
     def angtovec(pan, tilt):
-
-        print(f'rad: {pan}, {tilt}')
-        ct = math.cos(tilt)
-        st = math.sin(tilt)
-        cp = math.cos(pan)
-        sp = math.sin(pan)
+        print(f'angles: {pan}, {tilt}')
+        print(f'rad: {rtd*pan}, {rtd*tilt}')
+        ct = math.cos(rtd*tilt)
+        st = math.sin(rtd*tilt)
+        cp = math.cos(rtd*pan)
+        sp = math.sin(rtd*pan)
         return [ct*cp, st, ct*sp]
 
     #Looks for marked rows in the data sheet which signifies they contain a vector to be used
@@ -38,6 +39,11 @@ def onOffToOn(channel, sampleIndex, val, prev):
         
         points.append((float(cal[row+1,0]), float(cal[row+1,1]), float(cal[row+1,2])))
         
+    
+    points = [[-1, 1, 0], [1, 1, 0], [1, -1, 0], [-1, -1, 0]]
+    
+    x``
+    
     def dot(u, v):
         n = len(u)
         s = 0
@@ -70,6 +76,7 @@ def onOffToOn(channel, sampleIndex, val, prev):
 
         
     solro = np.linalg.solve(A, B)
+    solro[n+2] *= -1
     print(solro[n:n+3])
     out('true_position', solro[n:n+3])
     
