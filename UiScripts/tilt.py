@@ -16,7 +16,7 @@ def onOffToOn(channel, sampleIndex, val, prev):
 def whileOn(channel, sampleIndex, val, prev):
     row = int(op('Selected')[0])
     if row:
-        data[row, 4] = round(data[row, 4] + ((val - 2) / 50), 4)
+        data[row, 4] = round(data[row, 4] + ((val - 2) / 90), 4)
     return
 
 def onOnToOff(channel, sampleIndex, val, prev):

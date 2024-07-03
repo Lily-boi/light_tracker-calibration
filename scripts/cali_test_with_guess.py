@@ -1,15 +1,13 @@
 import numpy as np
 import math
 
-
 def normalize(v):
     norm = np.linalg.norm(v)
     if norm == 0:
         return v
     return v / norm
 
-
-def out(target, val, val2 = None):
+def out(target, val, val2=None):
     opt = op(target)
     opt.par.value0 = val[0]
     opt.par.value1 = val[1]
@@ -25,22 +23,20 @@ def ATV(pt):
     st = math.sin(tilt)
     cp = math.cos(pan) 
     sp = math.sin(pan)
-    return [ct*cp, st, ct*sp]
-    
+    return [ct * cp, st, ct * sp]
 
 def onSetupParameters(scriptOp):
     page = scriptOp.appendCustomPage('Custom')
     p = page.appendPulse('Calibrate', label='Calibrate')
-   
     return
 
 def onPulse(par):
     data = op('cal')
-        
+    
     def data_get(row, cols, cole=0):
         cole = cole or cols + 2
         sample = []
-        for i in range(cols, cole+1):
+        for i in range(cols, cole + 1):
             sample.append(float(data[row, i]))
         return sample
     
@@ -54,19 +50,19 @@ def onPulse(par):
                 V.append(v_)
                 u.append(u_)
                 out(f'vect{n}', u_, v_)
-            
+        
         V = np.array(V)
         u = np.array(u)
 
-        #INSERT CODE HERE
-        # GIVEN p_estimate (an estimation of the real world coordinates of the light)
-        # Derive some guesses for phi, theta, and beta
+        # Estimate the initial up vector from the scale on the light
+        scale_tilt = 0.1  # Example tilt angle from the scale on the light
+        scale_pan = 0.2  # Example pan angle from the scale on the light
+        up_vector = estimate_up_vector(scale_tilt, scale_pan)
+        
+        # Estimate initial guess for phi, theta, beta
+        phi_init, theta_init, beta_init = initial_guess_up_vector(up_vector, V, u)
 
-
-        phi_init = 0.0
-        theta_init = 0.0 
-        beta_init = 0.0
-
+        # Perform optimization
         phi_opt, theta_opt, beta_opt = newton_raphson_multi(phi_init, theta_init, beta_init, V, u)
 
         print(f"Optimal phi: {phi_opt}\ntheta: {theta_opt}\nbeta: {beta_opt}")
@@ -92,11 +88,34 @@ def onPulse(par):
             op(f'vect{n+1}').par.value6 = i[0]
             op(f'vect{n+1}').par.value7 = i[1]
             op(f'vect{n+1}').par.value8 = i[2]
-        
-        
+
 def onCook(scriptOp):
     scriptOp.clear()
     return
+
+def estimate_up_vector(scale_tilt, scale_pan):
+    ct = math.cos(scale_tilt)
+    st = math.sin(scale_tilt)
+    cp = math.cos(scale_pan)
+    sp = math.sin(scale_pan)
+    return np.array([ct * cp, st, ct * sp])
+
+def initial_guess_up_vector(up_vector, V, u):
+    up_vector = normalize(up_vector)
+    target_up = np.array([0, 1, 0])
+    v = np.cross(up_vector, target_up)
+    c = np.dot(up_vector, target_up)
+    k = 1 / (1 + c)
+    
+    R_up = np.array([[v[0] * v[0] * k + c, v[0] * v[1] * k - v[2], v[0] * v[2] * k + v[1]],
+                     [v[1] * v[0] * k + v[2], v[1] * v[1] * k + c, v[1] * v[2] * k - v[0]],
+                     [v[2] * v[0] * k - v[1], v[2] * v[1] * k + v[0], v[2] * v[2] * k + c]])
+
+    phi_init = math.atan2(R_up[1, 0], R_up[0, 0])
+    theta_init = math.asin(-R_up[2, 0])
+    beta_init = math.atan2(R_up[2, 1], R_up[2, 2])
+    
+    return phi_init, theta_init, beta_init
 
 def compute_R(phi, theta, beta):
     Rz_phi = np.array([[np.cos(phi), -np.sin(phi), 0],
@@ -158,62 +177,37 @@ def partial_R_beta(phi, theta, beta):
     
     return Rz_phi @ Ry_theta @ dRz_beta
 
-def objective_functions(phi, theta, beta, V, u):
-    N = V.shape[0]
-    R = compute_R(phi, theta, beta)
-    p0 = compute_p0(R, V, u)
-    
-    f1 = f2 = f3 = 0
-    for i in range(N):
-        Vi_minus_p0 = V[i] - p0
-        I_minus_uuT = np.eye(3) - np.outer(u[i], u[i])
-        RT_Vi_minus_p0 = R.T @ Vi_minus_p0
-        
-        f1 += Vi_minus_p0.T @ partial_R_phi(phi, theta, beta) @ I_minus_uuT @ RT_Vi_minus_p0
-        f2 += Vi_minus_p0.T @ partial_R_theta(phi, theta, beta) @ I_minus_uuT @ RT_Vi_minus_p0
-        f3 += Vi_minus_p0.T @ partial_R_beta(phi, theta, beta) @ I_minus_uuT @ RT_Vi_minus_p0
-    
-    return np.array([f1, f2, f3])
-
 def compute_p0(R, V, u):
-    N = V.shape[0]
-    sum_matrix = np.zeros((3, 3))
-    sum_vector = np.zeros(3)
-    
-    for i in range(N):
-        I_minus_uuT = np.eye(3) - np.outer(u[i], u[i])
-        RT_Vi = R.T @ V[i]
-        
-        sum_matrix += I_minus_uuT
-        sum_vector += I_minus_uuT @ RT_Vi
-    
-    p0 = R @ np.linalg.inv(sum_matrix) @ sum_vector
-    return p0
+    lhs = np.eye(3)
+    rhs = np.zeros(3)
+    for i in range(len(V)):
+        lhs += np.eye(3) - np.outer(u[i], u[i])
+        rhs += V[i] - R @ u[i]
+    return np.linalg.solve(lhs, rhs)
 
-def jacobian(phi, theta, beta, V, u):
-    eps = 1e-6
-    f0 = objective_functions(phi, theta, beta, V, u)
+def newton_raphson_multi(phi_init, theta_init, beta_init, V, u, tol=1e-6, max_iter=100):
+    phi = phi_init
+    theta = theta_init
+    beta = beta_init
     
-    J = np.zeros((3, 3))
-    for i, var in enumerate([phi, theta, beta]):
-        var_eps = np.copy([phi, theta, beta])
-        var_eps[i] += eps
-        f_eps = objective_functions(var_eps[0], var_eps[1], var_eps[2], V, u)
-        J[:, i] = (f_eps - f0) / eps
-    
-    return J
-
-def newton_raphson_multi(phi, theta, beta, V, u, tol=1e-6, max_iter=100):
-    for i in range(max_iter):
-        f = objective_functions(phi, theta, beta, V, u)
-        J = jacobian(phi, theta, beta, V, u)
+    for _ in range(max_iter):
+        R = compute_R(phi, theta, beta)
+        p0 = compute_p0(R, V, u)
+        F = np.zeros(3)
+        J = np.zeros((3, 3))
         
-        delta = np.linalg.solve(J, -f)
+        for i in range(len(V)):
+            F += R @ u[i] + p0 - V[i]
+            J += partial_R_phi(phi, theta, beta) @ u[i]
+            J += partial_R_theta(phi, theta, beta) @ u[i]
+            J += partial_R_beta(phi, theta, beta) @ u[i]
         
-        phi, theta, beta = phi + delta[0], theta + delta[1], beta + delta[2]
-        
-        if np.linalg.norm(delta) < tol:
+        if np.linalg.norm(F) < tol:
             break
+        
+        delta = np.linalg.solve(J, -F)
+        phi += delta[0]
+        theta += delta[1]
+        beta += delta[2]
     
     return phi, theta, beta
-

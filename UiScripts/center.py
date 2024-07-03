@@ -11,12 +11,14 @@ data = op('cal')
 
 
 def onOffToOn(channel, sampleIndex, val, prev):
-	return
-
-def whileOn(channel, sampleIndex, val, prev):
     row = int(op('Selected')[0])
     if row:
-        data[row, 3] = round(data[row, 3] + ((val - 2) / 90), 4)
+        for n in range(1, data.numRows):
+            data[n, 3] = data[row, 3]
+            data[n, 4] = data[row, 4]   
+    return
+
+def whileOn(channel, sampleIndex, val, prev):
     return
 
 def onOnToOff(channel, sampleIndex, val, prev):
