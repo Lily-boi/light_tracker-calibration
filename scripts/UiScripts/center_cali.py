@@ -1,19 +1,21 @@
-# me - this DAT
-# 
-# channel - the Channel object which has changed
-# sampleIndex - the index of the changed sample
-# val - the numeric value of the changed sample
-# prev - the previous sample value
-# 
-# Make sure the corresponding toggle is enabled in the CHOP Execute DAT.
+'''
+Changes angles based on 'center' s.t. you dont get any wonky 360 rotational things
+'''
+import math
 
 data = op('cal')
 
 
 def onOffToOn(channel, sampleIndex, val, prev):
     row = int(op('Selected')[0])
-    if row:
-        data[row, 5] = 0
+    center = data[row, 3]
+    center *= math.pi
+
+    if (center % 360) - 90 < 0 or (center % 360) + 90 > 360:
+        op('add').par.value0 = 1
+    else:
+        op('add').par.value0 = 0
+        
     return
 
 def whileOn(channel, sampleIndex, val, prev):
@@ -27,4 +29,3 @@ def whileOff(channel, sampleIndex, val, prev):
 
 def onValueChange(channel, sampleIndex, val, prev):
 	return
-	

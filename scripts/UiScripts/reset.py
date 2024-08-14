@@ -11,12 +11,21 @@ data = op('cal')
 
 
 def onOffToOn(channel, sampleIndex, val, prev):
-	return
+    for i in range(data.numRows-1):
+        data[i, 3] = 0
+        data[i, 4] = 0
+    
+    parent().par.Mountedplanex = 0
+    parent().par.Mountedplaney = 1
+    parent().par.Mountedplanez = 0
+    parent().par.Restingx = 1
+    parent().par.Restingy = 0
+    parent().par.Restingz = 0
+    parent().par.Positionx = 0
+    parent().par.Positiony = 0
+    parent().par.Positionz = 0
 
 def whileOn(channel, sampleIndex, val, prev):
-    row = int(op('Selected')[0])
-    if row:
-        data[row, 3] = round(data[row, 3] + ((val - 2) / 90), 4)
     return
 
 def onOnToOff(channel, sampleIndex, val, prev):
@@ -26,5 +35,5 @@ def whileOff(channel, sampleIndex, val, prev):
 	return
 
 def onValueChange(channel, sampleIndex, val, prev):
-	return
+    return
 	

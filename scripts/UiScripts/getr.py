@@ -12,8 +12,10 @@ data = op('cal')
 
 def onOffToOn(channel, sampleIndex, val, prev):
     row = int(op('Selected')[0])
-    if row:
-        data[row, 5] = 1
+    if row and row > 3:
+        data[row, 0] = op('Current_Coords')[0]
+        data[row, 1] = op('Current_Coords')[1]
+        data[row, 2] = op('Current_Coords')[2]
     return
 
 def whileOn(channel, sampleIndex, val, prev):
@@ -26,5 +28,5 @@ def whileOff(channel, sampleIndex, val, prev):
 	return
 
 def onValueChange(channel, sampleIndex, val, prev):
-	return
+    return
 	

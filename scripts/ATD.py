@@ -19,12 +19,19 @@ def convert(scriptOp):
 	x = scriptOp.inputs[0][0]
 	y = scriptOp.inputs[0][1]
 	
- 
-	x *= .4737
+	if (parent().par.Rot) & (x <= 180):
+		x += 360
+
+	pan_conv = 255/540
+	tilt_conv = 1/1.04688
+
+
+	x *= pan_conv
 	x_floor = math.floor(x)
 	x_fine = (x - x_floor) * 255	
-
-	y *= 1.17
+	
+	y *= tilt_conv
+	y += 41.5302613
 	y_floor = math.floor(y)
 	y_fine = (y - y_floor) * 255
 

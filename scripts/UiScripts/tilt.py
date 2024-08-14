@@ -11,14 +11,12 @@ data = op('cal')
 
 
 def onOffToOn(channel, sampleIndex, val, prev):
-    row = int(op('Selected')[0])
-    if row:
-        for n in range(1, data.numRows):
-            data[n, 3] = data[row, 3]
-            data[n, 4] = data[row, 4]   
-    return
+	return
 
 def whileOn(channel, sampleIndex, val, prev):
+    row = int(op('Selected')[0])
+    if row:
+        data[row, 4] = round(data[row, 4] + ((val - 2) / 100), 4)
     return
 
 def onOnToOff(channel, sampleIndex, val, prev):
@@ -28,5 +26,9 @@ def whileOff(channel, sampleIndex, val, prev):
 	return
 
 def onValueChange(channel, sampleIndex, val, prev):
-	return
+    if val > 0:
+        row = int(op('Selected')[0])
+        if row:
+            data[row, 4] = round(data[row, 4] + ((val - 2) / 100), 4)
+    return
 	

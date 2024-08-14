@@ -6,17 +6,14 @@
 # prev - the previous sample value
 # 
 # Make sure the corresponding toggle is enabled in the CHOP Execute DAT.
-
+import asyncio
 data = op('cal')
 
 
 def onOffToOn(channel, sampleIndex, val, prev):
-	return
+    return
 
 def whileOn(channel, sampleIndex, val, prev):
-    row = int(op('Selected')[0])
-    if row:
-        data[row, 4] = round(data[row, 4] + ((val - 2) / 90), 4)
     return
 
 def onOnToOff(channel, sampleIndex, val, prev):
@@ -26,5 +23,7 @@ def whileOff(channel, sampleIndex, val, prev):
 	return
 
 def onValueChange(channel, sampleIndex, val, prev):
-	return
-	
+    row = int(op('Selected')[0])
+    if row:
+        op('Ui/container1/Row_2/Right/Row4/button1').par.value0 = data[row, 5]
+    return
